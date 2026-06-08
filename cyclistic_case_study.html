@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cyclistic Bike-Share Analysis — Kenny Ngo</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: #ffffff;
+    color: #111111;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 60px 40px;
+    line-height: 1.7;
+  }
+  h1 { font-size: 32px; margin-bottom: 8px; }
+  h2 { font-size: 22px; margin-top: 48px; margin-bottom: 12px; border-bottom: 1px solid #ddd; padding-bottom: 6px; }
+  p { font-size: 15px; color: #333; margin-bottom: 14px; }
+  ul { padding-left: 20px; color: #333; font-size: 15px; }
+  ul li { margin-bottom: 8px; }
+  .meta { font-size: 13px; color: #777; margin-bottom: 40px; }
+  pre {
+    background: #f5f5f5;
+    padding: 16px 20px;
+    font-size: 13px;
+    overflow-x: auto;
+    border-left: 3px solid #2563EB;
+    margin: 20px 0;
+  }
+  a { color: #2563EB; }
+  .rec { margin-bottom: 20px; }
+  .rec strong { display: block; font-size: 15px; margin-bottom: 4px; }
+</style>
+</head>
+<body>
+
+<h1>Cyclistic Bike-Share Analysis</h1>
+<div class="meta">by Kenny Ngo &nbsp;·&nbsp; Tools: R, Tableau Public &nbsp;·&nbsp; Data: Jul 2025 – Jun 2026 &nbsp;·&nbsp; 5,842,778 rows</div>
+
+<h2>1. Business Task</h2>
+<p>The goal of this analysis is to determine how annual members and casual riders use Cyclistic bikes differently. These insights will help the marketing team design a strategy to convert casual riders into annual members, which Cyclistic's finance team has identified as key to future growth.</p>
+
+<h2>2. Data Sources</h2>
+<p>12 months of Cyclistic historical trip data (July 2025 – June 2026) provided by Motivate International Inc. under a public license. Data includes ride id, bike type, start/end timestamps, station names, coordinates, and rider type (casual or member). Personally identifiable information is excluded due to privacy restrictions.</p>
+
+<h2>3. Data Cleaning</h2>
+<ul>
+  <li>Loaded 12 CSV files into RStudio and combined into a single dataframe of 5,848,703 rows</li>
+  <li>Added ride_length column (difference between ended_at and started_at in minutes)</li>
+  <li>Added day_of_week column using wday() from lubridate</li>
+  <li>Added month and year columns for seasonal analysis</li>
+  <li>Removed 5,925 rows with zero or negative ride lengths</li>
+  <li>Removed rows with missing end coordinates</li>
+  <li>Final clean dataset: 5,842,778 rows</li>
+</ul>
+
+<pre>
+all_trips$ride_length <- as.numeric(difftime(all_trips$ended_at, all_trips$started_at, units = "mins"))
+all_trips$day_of_week <- wday(all_trips$started_at, label = TRUE)
+
+all_trips_clean <- all_trips %>%
+  filter(ride_length > 0) %>%
+  drop_na(end_lat, end_lng)
+</pre>
+
+<h2>4. Analysis Summary</h2>
+<p><strong>Ride Length:</strong> Casual riders averaged 18.9 minutes per ride vs 12.1 minutes for members. Casual riders take rides that are roughly 56% longer.</p>
+<p><strong>Day of Week:</strong> Casual riders peak on weekends (Saturday/Sunday), while members peak on weekdays (Tuesday–Thursday). This suggests casual riders use bikes for leisure and members use them for commuting.</p>
+<p><strong>Monthly Trends:</strong> Both groups peak in summer (June–August). Casual ridership drops off sharply in winter while members ride more consistently year-round.</p>
+<p><strong>Bike Type:</strong> Both groups prefer electric bikes over classic bikes. Members take significantly more total rides overall.</p>
+
+<h2>5. Visualizations</h2>
+<p>View the full interactive dashboard on Tableau Public:<br>
+<a href="https://public.tableau.com/app/profile/kenny.ngo6285/viz/CyclisticBikeShareAnalysis_17808909860820/CyclisticAnalysisDashboard" target="_blank">Cyclistic Analysis Dashboard →</a></p>
+
+<h2>6. Top 3 Recommendations</h2>
+<div class="rec">
+  <strong>1. Launch a Weekend-to-Membership Conversion Campaign</strong>
+  <p>Casual riders are most active on weekends. Target them with promotions at docking stations and in the app on Friday evenings and Saturdays. Offer a discounted first month of membership to encourage sign-ups at their peak usage times.</p>
+</div>
+<div class="rec">
+  <strong>2. Create a Summer Membership Promotion</strong>
+  <p>Casual ridership spikes in summer. Launch a limited-time summer membership offer in May before the peak season. Highlight the cost savings of a membership versus paying per ride over a full summer.</p>
+</div>
+<div class="rec">
+  <strong>3. Promote the Commuter Benefits of Membership</strong>
+  <p>Create a digital campaign showing the cost comparison between casual rides and an annual membership for someone who rides a few times per week. Target through social media and email in spring when ridership starts picking up.</p>
+</div>
+
+</body>
+</html>
